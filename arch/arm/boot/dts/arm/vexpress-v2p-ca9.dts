@@ -85,6 +85,14 @@
 		};
 	};
 
+	ufs40@22000000 {
+		compatible = "ufs40";
+		reg = <0x22000000 0x2000>;
+		interrupt-names = "ufs40_irq";
+		interrupts = <0 53 1>;
+		status = "enable";
+	};
+
 	clcd@10020000 {
 		compatible = "arm,pl111", "arm,primecell";
 		reg = <0x10020000 0x1000>;
