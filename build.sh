@@ -6,7 +6,7 @@
 # 第一步：校验参数数量（必须传入1个参数）
 if [ $# -ne 1 ]; then
     echo "❌ 错误：请传入1个参数（仅支持1/2/3）！"
-    echo "✅ 用法：$0 [1|2|3]"
+    echo "✅ 用法：$0 [cfg|bd|dtb]"
     exit 1
 fi
 
@@ -14,20 +14,14 @@ fi
 param=$(echo "$1" | xargs)  # 去首尾空格
 
 # 第三步：if/elif/else 分支判断
-if [ "${param}" == "1" ]; then
-    echo "📌 你输入了参数1，执行【分支1】逻辑..."
+if [ "${param}" == "cfg" ]; then
     make  O=/home/maohan/linux/qemu/kernel/buildout vexpress_defconfig
-    echo "✅ 分支1执行完成：启用UFS核心驱动"
 
-elif [ "${param}" == "2" ]; then
-    echo "📌 你输入了参数2，执行【分支2】逻辑..."
+elif [ "${param}" == "bd" ]; then
     make  O=/home/maohan/linux/qemu/kernel/buildout -j16
-    echo "✅ 分支2执行完成：启用UFS时钟缩放+写增强"
 
-elif [ "${param}" == "3" ]; then
-    echo "📌 你输入了参数3，执行【分支3】逻辑..."
+elif [ "${param}" == "dtb" ]; then
     make  O=/home/maohan/linux/qemu/kernel/buildout dtbs -j16 
-    echo "✅ 分支3执行完成：启用UFS调试日志"
 
 else
     echo "❌ 错误：参数仅支持1/2/3，你输入了${param}！"
