@@ -112,6 +112,7 @@ static bool use_mcq_mode = true;
 
 static bool is_mcq_supported(struct ufs_hba *hba)
 {
+	printk("hba->mcq_sup = %x, use_mcq_mode = %x\n", hba->mcq_sup, use_mcq_mode);
 	return hba->mcq_sup && use_mcq_mode;
 }
 
@@ -2478,6 +2479,8 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
 	int err;
 
 	hba->capabilities = ufshcd_readl(hba, REG_CONTROLLER_CAPABILITIES);
+
+	printk("hba->capabilities = %x\n", hba->capabilities);
 
 	/* nutrs and nutmrs are 0 based values */
 	hba->nutrs = (hba->capabilities & MASK_TRANSFER_REQUESTS_SLOTS_SDB) + 1;
@@ -7212,6 +7215,8 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
 	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
 	enabled_intr_status = intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
 
+	printk("ufshcd_intr intr_status = %x\n", intr_status);
+
 	ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
 
 	/* Directly handle interrupts since MCQ ESI handlers does the hard job */
@@ -9042,8 +9047,10 @@ static int ufshcd_alloc_mcq(struct ufs_hba *hba)
 
 	hba->nutrs = ret;
 	ret = ufshcd_mcq_init(hba);
-	if (ret)
+	if (ret) {
+		printk("ufshcd_mcq_init failed\n");
 		goto err;
+	}
 
 	/*
 	 * Previously allocated memory for nutrs may not be enough in MCQ mode.
@@ -9052,8 +9059,10 @@ static int ufshcd_alloc_mcq(struct ufs_hba *hba)
 	if (hba->nutrs != old_nutrs) {
 		ufshcd_release_sdb_queue(hba, old_nutrs);
 		ret = ufshcd_memory_alloc(hba);
-		if (ret)
+		if (ret) {
+			printk("ufshcd_memory_alloc failed\n");
 			goto err;
+		}
 		ufshcd_host_memory_configure(hba);
 	}
 
@@ -9075,12 +9084,13 @@ static void ufshcd_config_mcq(struct ufs_hba *hba)
 
 	ret = ufshcd_mcq_vops_config_esi(hba);
 	hba->mcq_esi_enabled = !ret;
-	dev_info(hba->dev, "ESI %sconfigured\n", ret ? "is not " : "");
+	dev_err(hba->dev, "ESI %sconfigured\n", ret ? "is not " : "");
+	
 
 	ufshcd_mcq_make_queues_operational(hba);
 	ufshcd_mcq_config_mac(hba, hba->nutrs);
 
-	dev_info(hba->dev, "MCQ configured, nr_queues=%d, io_queues=%d, read_queue=%d, poll_queues=%d, queue_depth=%d\n",
+	printk("MCQ configured, nr_queues=%d, io_queues=%d, read_queue=%d, poll_queues=%d, queue_depth=%d\n",
 		 hba->nr_hw_queues, hba->nr_queues[HCTX_TYPE_DEFAULT],
 		 hba->nr_queues[HCTX_TYPE_READ], hba->nr_queues[HCTX_TYPE_POLL],
 		 hba->nutrs);
@@ -10974,6 +10984,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
 		ufshcd_print_evt_hist(hba);
 		ufshcd_print_host_state(hba);
 		goto out_disable;
+	} else {
+		printk("Host controller enable succeed\n");
 	}
 
 	INIT_DELAYED_WORK(&hba->rpm_dev_flush_recheck_work, ufshcd_rpm_dev_flush_recheck_work);

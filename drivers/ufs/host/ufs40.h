@@ -1,0 +1,30 @@
+#ifndef _UFS40_H_
+#define _UFS40_H_
+
+#include <linux/arm-smccc.h>
+#include <linux/bitfield.h>
+#include <linux/clk.h>
+#include <linux/delay.h>
+#include <linux/module.h>
+#include <linux/of.h>
+#include <linux/of_address.h>
+#include <linux/of_device.h>
+#include <linux/of_platform.h>
+#include <linux/phy/phy.h>
+#include <linux/platform_device.h>
+#include <linux/regulator/consumer.h>
+#include <linux/reset.h>
+#include <ufs/ufshcd.h>
+#include "ufshcd-pltfrm.h"
+#include <ufs/ufs_quirks.h>
+#include <ufs/unipro.h>
+
+struct ufs40_host {
+	struct ufs_hba *hba;
+	struct ufs40_priv *priv;
+	void __iomem *ufs_dbg_mmio;
+};
+
+#endif
+
+

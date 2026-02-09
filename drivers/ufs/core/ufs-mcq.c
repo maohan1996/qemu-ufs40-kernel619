@@ -450,16 +450,20 @@ int ufshcd_mcq_init(struct ufs_hba *hba)
 	int ret, i;
 
 	ret = ufshcd_mcq_config_nr_queues(hba);
-	if (ret)
+	if (ret) {
+		printk("ufshcd_mcq_config_nr_queues failed\n");
 		return ret;
+	}
 
 	ret = ufshcd_vops_mcq_config_resource(hba);
-	if (ret)
+	if (ret) {
+		printk("ufshcd_vops_mcq_config_resource failed\n");
 		return ret;
+	}
 
 	ret = ufshcd_mcq_vops_op_runtime_config(hba);
 	if (ret) {
-		dev_err(hba->dev, "Operation runtime config failed, ret=%d\n",
+		printk("Operation runtime config failed, ret=%d\n",
 			ret);
 		return ret;
 	}
@@ -467,7 +471,7 @@ int ufshcd_mcq_init(struct ufs_hba *hba)
 				hba->nr_hw_queues * sizeof(struct ufs_hw_queue),
 				GFP_KERNEL);
 	if (!hba->uhq) {
-		dev_err(hba->dev, "ufs hw queue memory allocation failed\n");
+		printk("ufs hw queue memory allocation failed\n");
 		return -ENOMEM;
 	}
 

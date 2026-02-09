@@ -85,12 +85,10 @@
 		};
 	};
 
-	ufs40@22000000 {
-		compatible = "ufs40";
+	ufs40: ufs40@22000000 {
+		compatible = "ufshcd-ufs40";
 		reg = <0x22000000 0x2000>;
-		interrupt-names = "ufs40_irq";
 		interrupts = <0 53 1>;
-		status = "enable";
 	};
 
 	clcd@10020000 {
