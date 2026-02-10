@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# 脚本名：branch_by_param.sh
-# 用法：./branch_by_param.sh [1|2|3]
-
 # 第一步：校验参数数量（必须传入1个参数）
 if [ $# -ne 1 ]; then
     echo "❌ 错误：请传入1个参数（仅支持[cfg|bd|dtb]）！"
