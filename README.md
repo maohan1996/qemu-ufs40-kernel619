@@ -1,1 +1,1 @@
-# qemu-ufs40-kernel619
+编译流程见 build.sh
