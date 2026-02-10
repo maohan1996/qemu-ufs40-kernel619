@@ -171,9 +171,9 @@ static int ufshcd_mcq_config_nr_queues(struct ufs_hba *hba)
 	struct Scsi_Host *host = hba->host;
 
 	/* maxq is 0 based value */
-	hba_maxq = FIELD_GET(MAX_QUEUE_SUP, hba->mcq_capabilities) + 1;
+	hba_maxq = FIELD_GET(MAX_QUEUE_SUP, hba->mcq_capabilities) + 1;//hba_maxq=2
 
-	tot_queues = read_queues + poll_queues + rw_queues;
+	tot_queues = read_queues + poll_queues + rw_queues;//read_queues=0;rw_queues=0;poll_queues=1
 
 	if (hba_maxq < tot_queues) {
 		dev_err(hba->dev, "Total queues (%d) exceeds HC capacity (%d)\n",
@@ -192,31 +192,31 @@ static int ufshcd_mcq_config_nr_queues(struct ufs_hba *hba)
 
 	rem = hba_maxq;
 
-	if (rw_queues) {
+	if (rw_queues) {//0 no run
 		hba->nr_queues[HCTX_TYPE_DEFAULT] = rw_queues;
 		rem -= hba->nr_queues[HCTX_TYPE_DEFAULT];
 	} else {
-		rw_queues = num_possible_cpus();
+		rw_queues = num_possible_cpus();//become 4
 	}
 
-	if (poll_queues) {
+	if (poll_queues) { //1 ,so run , and value = 1
 		hba->nr_queues[HCTX_TYPE_POLL] = poll_queues;
 		rem -= hba->nr_queues[HCTX_TYPE_POLL];
 	}
 
-	if (read_queues) {
+	if (read_queues) {//0 , so no run
 		hba->nr_queues[HCTX_TYPE_READ] = read_queues;
 		rem -= hba->nr_queues[HCTX_TYPE_READ];
 	}
 
-	if (!hba->nr_queues[HCTX_TYPE_DEFAULT])
+	if (!hba->nr_queues[HCTX_TYPE_DEFAULT])//hba->nr_queues[HCTX_TYPE_DEFAULT]=1 , so no run
 		hba->nr_queues[HCTX_TYPE_DEFAULT] = min3(rem, rw_queues,
 							 num_possible_cpus());
 
 	for (i = 0; i < HCTX_MAX_TYPES; i++)
 		host->nr_hw_queues += hba->nr_queues[i];
 
-	hba->nr_hw_queues = host->nr_hw_queues;
+	hba->nr_hw_queues = host->nr_hw_queues;// value = 2
 	return 0;
 }
 
@@ -449,19 +449,19 @@ int ufshcd_mcq_init(struct ufs_hba *hba)
 	struct ufs_hw_queue *hwq;
 	int ret, i;
 
-	ret = ufshcd_mcq_config_nr_queues(hba);
+	ret = ufshcd_mcq_config_nr_queues(hba);//MCQ设置几个队列
 	if (ret) {
 		printk("ufshcd_mcq_config_nr_queues failed\n");
 		return ret;
 	}
 
-	ret = ufshcd_vops_mcq_config_resource(hba);
+	ret = ufshcd_vops_mcq_config_resource(hba); //取mcq寄存器的基地址
 	if (ret) {
 		printk("ufshcd_vops_mcq_config_resource failed\n");
 		return ret;
 	}
 
-	ret = ufshcd_mcq_vops_op_runtime_config(hba);
+	ret = ufshcd_mcq_vops_op_runtime_config(hba);//把SQ和CQ的dbr和IS寄存器地址相对 host base 的偏移传给hba
 	if (ret) {
 		printk("Operation runtime config failed, ret=%d\n",
 			ret);

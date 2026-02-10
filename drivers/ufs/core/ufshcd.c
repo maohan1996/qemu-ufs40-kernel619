@@ -112,7 +112,6 @@ static bool use_mcq_mode = true;
 
 static bool is_mcq_supported(struct ufs_hba *hba)
 {
-	printk("hba->mcq_sup = %x, use_mcq_mode = %x\n", hba->mcq_sup, use_mcq_mode);
 	return hba->mcq_sup && use_mcq_mode;
 }
 
@@ -9039,9 +9038,9 @@ static void ufshcd_release_sdb_queue(struct ufs_hba *hba, int nutrs)
 static int ufshcd_alloc_mcq(struct ufs_hba *hba)
 {
 	int ret;
-	int old_nutrs = hba->nutrs;
+	int old_nutrs = hba->nutrs;//this time, value is 32
 
-	ret = ufshcd_get_hba_mac(hba);
+	ret = ufshcd_get_hba_mac(hba);//ret = 32
 	if (ret < 0)
 		return ret;
 
@@ -10835,6 +10834,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
 	hba->mmio_base = mmio_base;
 	hba->irq = irq;
 	hba->vps = &ufs_hba_vps;
+
+	printk("hba->mmio_base = 0x%x\n", hba->mmio_base);
 
 	/*
 	 * Initialize clk_gating.lock early since it is being used in
