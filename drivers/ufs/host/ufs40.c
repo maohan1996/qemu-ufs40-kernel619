@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * UNISOC UFS Host Controller driver
+ *
+ * Copyright (C) 2022 Unisoc, Inc.
+ * Author: han mao <han.mao@unisoc.com>
+ */
 
 #include <linux/arm-smccc.h>
 #include <linux/bitfield.h>
